@@ -73,7 +73,7 @@ if pagina == "Visão Geral":
     )
 
     st.plotly_chart(fig, use_container_width=True)
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=True)
 
 # =========================
 # Análise Exploratória
@@ -139,7 +139,7 @@ elif pagina == "Análise Exploratória":
     st.plotly_chart(fig_mes, use_container_width=True)
 
     st.subheader("📊 Estatísticas descritivas")
-    st.dataframe(df["vendas"].describe())
+    st.dataframe(df["vendas"].describe(), use_container_width=True)
 
 # =========================
 # Modelos
@@ -198,7 +198,10 @@ elif pagina == "Previsão Final":
         value=12
     )
 
-    previsao_futura = modelo_sarima.forecast(steps=periodos)
+    previsao_futura = modelo_sarima.predict(
+        start=len(df),
+        end=len(df) + periodos - 1
+    )
 
     datas_futuras = pd.date_range(
         start=df.index.max() + pd.DateOffset(months=1),
@@ -249,7 +252,10 @@ elif pagina == "Impacto Financeiro":
         value=12
     )
 
-    previsao_futura = modelo_sarima.forecast(steps=periodos)
+    previsao_futura = modelo_sarima.predict(
+        start=len(df),
+        end=len(df) + periodos - 1
+    )
 
     receita_prevista = previsao_futura.sum() * preco_medio
     receita_ultimo_ano = df["vendas"].tail(12).sum() * preco_medio
